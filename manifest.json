@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "manifest_version": 1,
   "description": "Roll or pick a drink from The Last Lantern's menu. Daggerheart-flavored, minor effects only.",
-  "icon": "https://YOURNAME.github.io/REPONAME/icon.svg",
+  "icon": "https://trunags.github.io/The-Last-Lantern/icon.svg",
   "action": {
     "title": "Drink Roller",
-    "icon": "https://YOURNAME.github.io/REPONAME/icon.svg",
-    "popover": "https://YOURNAME.github.io/REPONAME/popover.html",
+    "icon": "https://trunags.github.io/The-Last-Lantern/icon.svg",
+    "popover": "https://trunags.github.io/The-Last-Lantern/popover.html",
     "width": 420,
     "height": 680
   },
-  "background_url": "https://YOURNAME.github.io/REPONAME/background.html"
+  "background_url": "https://trunags.github.io/The-Last-Lantern/background.html"
 }
