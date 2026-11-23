@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Last Lantern - Drink Roller</title>
+<style>
+  @font-face{font-family:'Fraunces';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/fraunces-latin-400-normal.woff2') format('woff2');}
+  @font-face{font-family:'Fraunces';font-style:normal;font-weight:600;font-display:swap;src:url('fonts/fraunces-latin-600-normal.woff2') format('woff2');}
+  @font-face{font-family:'Karla';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/karla-latin-400-normal.woff2') format('woff2');}
+  @font-face{font-family:'Karla';font-style:normal;font-weight:600;font-display:swap;src:url('fonts/karla-latin-600-normal.woff2') format('woff2');}
+  @font-face{font-family:'Karla';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/karla-latin-700-normal.woff2') format('woff2');}
+  :root{
+    --dusk-950: #171c22;
+    --dusk-900: #1e252d;
+    --dusk-800: #283340;
+    --sapphire: #2d6a8f;
+    --sapphire-bright: #4a92bc;
+    --brass: #b3813f;
+    --brass-bright: #d6a45e;
+    --tan: #e6d3ab;
+    --tan-dim: #b9a877;
+    --ink: #2c2013;
+    --leather: #4a3423;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+    background: var(--dusk-950);
+    color: var(--tan);
+    font-family: 'Karla', sans-serif;
+  }
+
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(214,164,94,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 400px at 85% 100%, rgba(45,106,143,0.20), transparent 60%),
+      var(--dusk-950);
+    display:flex;
+    justify-content:center;
+    padding: 20px 16px 28px;
+  }
+
+  .stage{
+    width:100%;
+    max-width: 560px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .signage{
+    text-align:center;
+    margin-bottom: 34px;
+  }
+
+  .signage .kicker{
+    font-family:'Karla', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--sapphire-bright);
+    margin: 0 0 10px;
+  }
+
+  .signage h1{
+    font-family:'Fraunces', serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: clamp(34px, 6vw, 46px);
+    line-height: 1.05;
+    margin: 0 0 12px;
+    color: var(--tan);
+  }
+
+  .signage p{
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--tan-dim);
+    margin: 0 auto;
+    max-width: 400px;
+  }
+
+  /* --- The button: order a round --- */
+  .order-btn{
+    position:relative;
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    font-family:'Fraunces', serif;
+    font-weight: 600;
+    font-size: 19px;
+    color: var(--ink);
+    background: linear-gradient(180deg, var(--brass-bright), var(--brass));
+    padding: 18px 42px;
+    border-radius: 6px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.35) inset,
+      0 10px 24px rgba(0,0,0,0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    margin-bottom: 8px;
+  }
+
+  .order-btn:hover{
+    transform: translateY(-2px);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.4) inset,
+      0 14px 30px rgba(0,0,0,0.45);
+  }
+
+  .order-btn:active{
+    transform: translateY(1px) scale(0.98);
+  }
+
+  .order-btn:focus-visible{
+    outline: 3px solid var(--sapphire-bright);
+    outline-offset: 3px;
+  }
+
+  .order-btn:disabled{
+    cursor: default;
+    opacity: 0.75;
+    transform: none;
+  }
+
+  .tab-cost{
+    font-size: 12.5px;
+    color: var(--tan-dim);
+    margin-bottom: 28px;
+    letter-spacing: 0.02em;
+  }
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    width: 100%;
+    max-width: 360px;
+    margin-bottom: 22px;
+  }
+
+  .divider::before,
+  .divider::after{
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--dusk-800);
+  }
+
+  .divider span{
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    color: var(--tan-dim);
+    white-space: nowrap;
+  }
+
+  .picker{
+    width: 100%;
+    max-width: 400px;
+    display:flex;
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+
+  .picker select{
+    flex: 1;
+    appearance: none;
+    font-family: 'Karla', sans-serif;
+    font-size: 14.5px;
+    color: var(--tan);
+    background: var(--dusk-900) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23d6a45e'%3E%3Cpath d='M5.5 7.5l4.5 5 4.5-5z'/%3E%3C/svg%3E") no-repeat right 12px center;
+    background-size: 16px;
+    border: 1px solid var(--dusk-800);
+    border-radius: 6px;
+    padding: 12px 34px 12px 14px;
+    cursor: pointer;
+  }
+
+  .picker select:focus-visible{
+    outline: 2px solid var(--sapphire-bright);
+    outline-offset: 2px;
+  }
+
+  .picker button{
+    appearance:none;
+    border: 1px solid var(--sapphire);
+    cursor:pointer;
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--sapphire-bright);
+    background: transparent;
+    padding: 12px 20px;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .picker button:hover{
+    background: rgba(45,106,143,0.18);
+  }
+
+  .picker button:focus-visible{
+    outline: 2px solid var(--sapphire-bright);
+    outline-offset: 2px;
+  }
+
+  .picker button:disabled{
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  /* --- Result card --- */
+  .result-wrap{
+    width: 100%;
+    min-height: 220px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    perspective: 1200px;
+  }
+
+  .placeholder{
+    text-align:center;
+    color: var(--tan-dim);
+    font-size: 14px;
+    padding-top: 56px;
+    opacity: 0.7;
+  }
+
+  .card{
+    width: 100%;
+    background: linear-gradient(180deg, #f2e4bf, var(--tan));
+    color: var(--ink);
+    border-radius: 8px;
+    padding: 28px 30px 26px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    transform-origin: top center;
+    animation: pour 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+    border: 1px solid rgba(179,129,63,0.55);
+  }
+
+  @keyframes pour{
+    0%{ opacity:0; transform: rotateX(-14deg) translateY(-8px) scale(0.98); }
+    100%{ opacity:1; transform: rotateX(0deg) translateY(0) scale(1); }
+  }
+
+  .card-top{
+    border-bottom: 1px solid rgba(45,106,143,0.3);
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+  }
+
+  .card-name{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 23px;
+    line-height: 1.15;
+    margin: 0;
+  }
+
+  .card-flavor{
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--leather);
+    margin: 0 0 16px;
+    font-style: italic;
+  }
+
+  .card-effect{
+    display:flex;
+    gap: 10px;
+    align-items:flex-start;
+    background: rgba(45,106,143,0.08);
+    border-left: 3px solid var(--sapphire);
+    padding: 12px 14px;
+    border-radius: 4px;
+  }
+
+  .card-effect-none{
+    background: rgba(74,52,35,0.08);
+    border-left-color: var(--leather);
+  }
+
+  .card-effect-none .card-effect-label{
+    color: var(--leather);
+  }
+
+  .card-effect-label{
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--sapphire);
+    margin: 0 0 3px;
+  }
+
+  .card-effect p{
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+
+  /* --- History --- */
+  .history{
+    width: 100%;
+    margin-top: 40px;
+  }
+
+  .history h2{
+    font-family:'Karla', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    color: var(--tan-dim);
+    font-weight: 600;
+    margin: 0 0 12px;
+    text-align: center;
+  }
+
+  .history ul{
+    list-style: none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+  }
+
+  .history li{
+    display:flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--tan-dim);
+    background: var(--dusk-900);
+    border: 1px solid var(--dusk-800);
+    border-radius: 6px;
+    padding: 9px 14px;
+  }
+
+  .history li span:first-child{
+    color: var(--tan);
+    font-weight: 600;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .card{ animation: none; }
+    .order-btn{ transition: none; }
+  }
+
+  /* --- Owlbear popover overrides --- */
+  html, body{ height:auto; overflow-x:hidden; }
+  .stage{ max-width: 100%; }
+  .signage{ margin-bottom: 16px; }
+  .signage h1{ font-size: 28px; margin-bottom: 0; }
+  .signage .kicker{ margin-bottom: 6px; }
+  .order-btn{ padding: 14px 34px; font-size: 17px; }
+  .tab-cost{ margin-bottom: 16px; }
+  .divider{ margin-bottom: 14px; }
+  .picker{ margin-bottom: 14px; }
+  .share{
+    display:flex; align-items:center; gap:8px;
+    font-size:13px; color: var(--tan-dim);
+    margin-bottom: 18px; cursor:pointer; user-select:none;
+  }
+  .share input{ accent-color: var(--sapphire-bright); width:16px; height:16px; margin:0; }
+  .result-wrap{ min-height: 0; }
+  .placeholder{ padding-top: 8px; }
+  .card{ padding: 20px 20px 18px; }
+  .card-name{ font-size: 21px; }
+  .history{ margin-top: 22px; }
+
+  /* --- Menu editor --- */
+  .linkbtn{
+    appearance:none; background:none; border:none; cursor:pointer;
+    font-family:'Karla',sans-serif; font-size:13px; font-weight:600;
+    color: var(--sapphire-bright); padding:4px 0; margin: 0 0 18px;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .linkbtn:focus-visible{ outline:2px solid var(--sapphire-bright); outline-offset:2px; }
+  .manage{ width:100%; display:none; }
+  .manage h2{
+    font-family:'Fraunces',serif; font-weight:600; font-size:22px;
+    margin: 0 0 4px; color: var(--tan);
+  }
+  .manage .sub{ font-size:13px; color: var(--tan-dim); margin:0 0 16px; line-height:1.5; }
+  .manage h3{
+    font-size:12px; letter-spacing:0.05em; color: var(--tan-dim);
+    font-weight:600; margin: 20px 0 8px;
+  }
+  .rows{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+  .rows li{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background: var(--dusk-900); border:1px solid var(--dusk-800);
+    border-radius:6px; padding:7px 10px 7px 12px; font-size:13.5px;
+  }
+  .rows li .nm{ color: var(--tan); font-weight:600; min-width:0; overflow-wrap:anywhere; }
+  .rows li .tag{ font-size:11px; color: var(--brass-bright); margin-left:6px; font-weight:600; }
+  .smallbtn{
+    appearance:none; cursor:pointer; flex-shrink:0;
+    font-family:'Karla',sans-serif; font-size:12px; font-weight:600;
+    color: var(--tan-dim); background:transparent;
+    border:1px solid var(--dusk-800); border-radius:5px; padding:4px 10px;
+  }
+  .smallbtn:hover{ color: var(--tan); border-color: var(--brass); }
+  .smallbtn:focus-visible{ outline:2px solid var(--sapphire-bright); outline-offset:2px; }
+  .field{ display:flex; flex-direction:column; gap:4px; margin-bottom:10px; }
+  .field label{ font-size:12px; color: var(--tan-dim); font-weight:600; }
+  .field input, .field textarea{
+    font-family:'Karla',sans-serif; font-size:14px; color: var(--tan);
+    background: var(--dusk-900); border:1px solid var(--dusk-800);
+    border-radius:6px; padding:9px 11px; width:100%;
+  }
+  .field textarea{ resize: vertical; min-height:64px; }
+  .field input:focus-visible, .field textarea:focus-visible{
+    outline:2px solid var(--sapphire-bright); outline-offset:1px;
+  }
+  .field .hint{ font-size:11.5px; color: var(--tan-dim); opacity:.8; }
+  .addbtn{
+    appearance:none; cursor:pointer; font-family:'Fraunces',serif; font-weight:600; font-size:15px;
+    color: var(--ink); border:none; border-radius:6px; padding:11px 22px;
+    background: linear-gradient(180deg, var(--brass-bright), var(--brass));
+  }
+  .addbtn:disabled{ opacity:.6; cursor:default; }
+  .addbtn:focus-visible{ outline:3px solid var(--sapphire-bright); outline-offset:3px; }
+  .msg{ font-size:12.5px; margin: 8px 0 0; min-height:1.2em; color: var(--tan-dim); }
+  .msg.err{ color: #e58b8b; }
+  .meter{ font-size:12px; color: var(--tan-dim); margin-top: 18px; }
+  .gmopt{
+    display:flex; align-items:center; gap:8px; font-size:13px; color: var(--tan-dim);
+    margin-top: 18px; cursor:pointer;
+  }
+  .gmopt input{ accent-color: var(--sapphire-bright); width:16px; height:16px; margin:0; }
+  .empty{ font-size:13px; color: var(--tan-dim); font-style:italic; padding: 2px 0; }
+  .backbtn{ margin-bottom: 14px; }
+</style>
+</head>
+<body>
+<div class="stage">
+<div id="mainView" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+  <div class="signage">
+    <p class="kicker">the last lantern</p>
+    <h1>Roll the night's drink</h1>
+  </div>
+
+  <button class="order-btn" id="orderBtn" type="button">Order a Drink</button>
+  <p class="tab-cost">A handful of gold, or a favor owed to the barkeep</p>
+
+  <div class="divider"><span>or ask for something by name</span></div>
+  <div class="picker">
+    <select id="drinkSelect" aria-label="Choose a specific drink"></select>
+    <button id="pickBtn" type="button">Pour It</button>
+  </div>
+
+  <label class="share"><input type="checkbox" id="shareBox" checked> Tell the rest of the table what I ordered</label>
+
+  <button class="linkbtn" id="manageBtn" type="button">Edit this room's menu</button>
+
+  <div class="result-wrap" id="resultWrap">
+    <p class="placeholder">Your table is empty. Order something.</p>
+  </div>
+
+  <div class="history" id="historyBlock" style="display:none;">
+    <h2>previously served</h2>
+    <ul id="historyList"></ul>
+  </div>
+</div>
+
+<div class="manage" id="manageView">
+  <button class="linkbtn backbtn" id="backBtn" type="button">&larr; Back to the bar</button>
+  <h2>Room menu</h2>
+  <p class="sub">Changes here apply to everyone in this room, and only this room.</p>
+  <p class="sub" id="readonlyNote" style="display:none;">Only the GM can change the menu in this room.</p>
+
+  <h3>ON THE MENU</h3>
+  <ul class="rows" id="menuRows"></ul>
+
+  <div id="removedBlock">
+    <h3>REMOVED FROM THE MENU</h3>
+    <ul class="rows" id="removedRows"></ul>
+  </div>
+
+  <div id="addBlock">
+    <h3>ADD A DRINK</h3>
+    <div class="field">
+      <label for="newName">Name</label>
+      <input id="newName" type="text" maxlength="60" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="newFlavor">Description</label>
+      <textarea id="newFlavor" maxlength="400"></textarea>
+    </div>
+    <div class="field">
+      <label for="newEffect">Effect</label>
+      <input id="newEffect" type="text" maxlength="200" autocomplete="off">
+      <span class="hint">Leave blank for a drink with no effect.</span>
+    </div>
+    <button class="addbtn" id="addBtn" type="button">Add to menu</button>
+    <p class="msg" id="addMsg" role="status"></p>
+  </div>
+
+  <label class="gmopt" id="gmOpt" style="display:none;">
+    <input type="checkbox" id="playersCanEdit"> Let players edit the menu too
+  </label>
+  <p class="meter" id="meter"></p>
+</div>
+</div>
+<script src="popover.js"></script>
+</body>
+</html>
